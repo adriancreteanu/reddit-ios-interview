@@ -14,9 +14,11 @@ final class FeedViewModel {
     private var characters = [Character]()
     
     @Published private var shouldReload = false
+    @Published private var isLoading: Bool = false
     @Published private var error: Error?
     
     var dataPublisher: Published<Bool>.Publisher { $shouldReload }
+    var loadingPublisher: Published<Bool>.Publisher { $isLoading }
     var errorPublisher: Published<Error?>.Publisher { $error }
     
     init(service: FeedService) {
@@ -26,6 +28,8 @@ final class FeedViewModel {
     // MARK: - Network
     
     func fetchCharacters() {
+        isLoading = true
+        
         service.fetchCharacters { [weak self] result in
             switch result {
             case let .success(characters):
@@ -35,6 +39,8 @@ final class FeedViewModel {
             case let .failure(error):
                 self?.error = error
             }
+            
+            self?.isLoading = false
         }
     }
 }

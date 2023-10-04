@@ -14,6 +14,12 @@ final class FeedViewController: UITableViewController {
     private var viewModel: FeedViewModelDelegate
     private var cancellables: Set<AnyCancellable> = []
     
+    private var activityIndicator: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.hidesWhenStopped = true
+        return spinner
+    }()
+    
     // MARK: - Lifecycle
     
     init(viewModel: FeedViewModelDelegate) {
@@ -41,6 +47,12 @@ final class FeedViewController: UITableViewController {
                     self?.tableView.reloadData()
                 },
             
+            viewModel.loadingPublisher
+                .receive(on: RunLoop.main)
+                .sink { [weak self] isLoading in
+                    self?.handleLoadingIndicator(isLoading: isLoading)
+                },
+            
             viewModel.errorPublisher
                 .receive(on: RunLoop.main)
                 .sink { [weak self] error in
@@ -61,6 +73,13 @@ final class FeedViewController: UITableViewController {
         
         let nib = UINib(nibName: FeedItemTableViewCell.reuseIdentifier, bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: FeedItemTableViewCell.reuseIdentifier)
+        tableView.backgroundView = activityIndicator
+    }
+    
+    private func handleLoadingIndicator(isLoading: Bool) {
+        isLoading ?
+            activityIndicator.startAnimating() :
+            activityIndicator.stopAnimating()
     }
 }
 
