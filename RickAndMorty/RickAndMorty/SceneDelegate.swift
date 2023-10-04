@@ -17,7 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let vc = FeedViewController()
+        let viewModel = FeedViewModel(service: FeedAPIService(apiClient: ApiClient()))
+        let vc = FeedViewController(viewModel: viewModel)
 
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
