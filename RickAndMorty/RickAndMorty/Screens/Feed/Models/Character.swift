@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Character: Decodable {
+struct Character: Decodable, Equatable {
     let name: String
     let image: String
 }
