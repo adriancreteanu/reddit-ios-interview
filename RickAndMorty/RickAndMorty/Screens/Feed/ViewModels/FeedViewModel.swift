@@ -14,8 +14,10 @@ final class FeedViewModel {
     private var characters = [Character]()
     
     @Published private var shouldReload = false
+    @Published private var error: Error?
     
     var dataPublisher: Published<Bool>.Publisher { $shouldReload }
+    var errorPublisher: Published<Error?>.Publisher { $error }
     
     init(service: FeedService) {
         self.service = service
@@ -31,8 +33,7 @@ final class FeedViewModel {
                 self?.shouldReload = true
                 
             case let .failure(error):
-                print("Failed to fetch items.")
-                // Show alert with error on VC
+                self?.error = error
             }
         }
     }

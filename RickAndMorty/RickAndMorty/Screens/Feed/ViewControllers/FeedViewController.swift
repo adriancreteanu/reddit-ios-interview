@@ -32,15 +32,27 @@ final class FeedViewController: UITableViewController {
 
         setup()
         
-        viewModel.dataPublisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] shouldReload in
-                guard shouldReload else { return }
+        [
+            viewModel.dataPublisher
+                .receive(on: RunLoop.main)
+                .sink { [weak self] shouldReload in
+                    guard shouldReload else { return }
             
-                self?.tableView.reloadData()
-            }
-            .store(in: &cancellables)
-        
+                    self?.tableView.reloadData()
+                },
+            
+            viewModel.errorPublisher
+                .receive(on: RunLoop.main)
+                .sink { [weak self] error in
+                    guard let error = error else { return }
+                      
+                    self?.showAlert(title: "Error", message: error.localizedDescription)
+                }
+        ]
+        .forEach {
+            $0.store(in: &cancellables)
+        }
+            
         viewModel.fetchCharacters()
     }
 

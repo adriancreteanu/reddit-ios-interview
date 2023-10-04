@@ -12,6 +12,7 @@ protocol FeedViewModelDelegate {
     // Combine
     
     var dataPublisher: Published<Bool>.Publisher { get }
+    var errorPublisher: Published<Error?>.Publisher { get }
     
     func fetchCharacters()
     
